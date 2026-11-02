@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Vendor Atlas</title>
+<style>
+  :root { --bg:#f7f3ea; --ink:#141a3a; --ink2:#4b5068; --accent:#2a44c9; }
+  * { box-sizing:border-box; }
+  body { margin:0; min-height:100svh; display:grid; place-items:center; background:var(--bg); color:var(--ink);
+         font:16px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif; padding:24px; }
+  main { max-width:420px; text-align:center; }
+  h1 { font:600 28px/1.2 Georgia,serif; margin:0 0 8px; }
+  p { color:var(--ink2); margin:0 0 20px; }
+  a.btn { display:inline-block; background:var(--accent); color:#fff; text-decoration:none; padding:12px 22px; border-radius:999px; font-weight:600; }
+  .dot { display:inline-block; width:8px; height:8px; border-radius:50%; background:var(--accent); margin-right:8px; animation:p 1s infinite alternate; }
+  @keyframes p { to { opacity:.25; } }
+</style>
+</head>
+<body>
+<main>
+  <h1>Vendor Atlas</h1>
+  <p id="msg"><span class="dot"></span>Opening…</p>
+  <a id="go" class="btn" href="#" hidden>Open Vendor Atlas</a>
+</main>
+<script>
+// The office PC publishes its current address to current.json whenever it
+// changes. The query string skips GitHub's 10-minute cache.
+fetch("current.json?t=" + Date.now(), { cache: "no-store" })
+  .then((r) => r.json())
+  .then(({ url }) => {
+    if (!/^https:\/\/[a-z0-9-]+\.trycloudflare\.com\/?$/.test(url || "")) throw new Error("no address");
+    const go = document.getElementById("go");
+    go.href = url;
+    go.hidden = false;
+    document.getElementById("msg").textContent = "Taking you there now.";
+    location.replace(url);
+  })
+  .catch(() => {
+    document.getElementById("msg").textContent =
+      "Vendor Atlas isn't reachable right now. The office PC may be restarting; try again in a few minutes.";
+  });
+</script>
+</body>
+</html>
